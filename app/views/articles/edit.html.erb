@@ -25,3 +25,8 @@
   </p>
 
 <% end %>
+
+<p>
+  <%= link_to 'Article list', articles_path %> |
+  <%= link_to 'Delete', article_path(@article), method: :delete, data: { confirm: "Are you sure?" } %>
+</p>
