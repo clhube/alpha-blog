@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :require_user, except: [:index, :show]
-  before_action :require_same_user, except: [:index, :show]
+  before_action :require_user, only: [:update, :destroy, :edit]
+  before_action :require_same_user, only: [:update, :destroy, :edit]
 
 
   def new
@@ -33,7 +33,7 @@ class UsersController < ApplicationController
 
   def destroy
     @user.destroy
-    session[:user_id] = nil
+    session[:user_id] = nil if @user == current_user
     flash[:notice] = "your profil has been destroyed"
     redirect_to users_path
   end
@@ -57,7 +57,7 @@ class UsersController < ApplicationController
   end
 
   def require_same_user
-    if current_user != @user
+    if current_user != @user && !current_user.admin?
       flash[:alert] = "You don't have the right to do this"
       redirect_to @user
     end
