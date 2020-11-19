@@ -10,4 +10,11 @@ class ApplicationController < ActionController::Base
     !!current_user
   end
 
+  def require_user
+    if !logged_in?
+      flash[:alert] = "You don't have the permission to do this, you must log in first"
+      redirect_to login_path
+    end
+  end
+
 end

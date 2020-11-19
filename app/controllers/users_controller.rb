@@ -1,5 +1,8 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update]
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :require_user, except: [:index, :show]
+  before_action :require_same_user, except: [:index, :show]
+
 
   def new
     @user = User.new
@@ -28,6 +31,13 @@ class UsersController < ApplicationController
     end
   end
 
+  def destroy
+    @user.destroy
+    session[:user_id] = nil
+    flash[:notice] = "your profil has been destroyed"
+    redirect_to users_path
+  end
+
   def show
     @articles = @user.articles.paginate(page: params[:page], per_page: 5)
   end
@@ -44,5 +54,12 @@ class UsersController < ApplicationController
 
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def require_same_user
+    if current_user != @user
+      flash[:alert] = "You don't have the right to do this"
+      redirect_to @user
+    end
   end
 end
